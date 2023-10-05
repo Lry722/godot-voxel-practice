@@ -1,0 +1,39 @@
+[gd_scene load_steps=9 format=3 uid="uid://cgrq37cgfhbp5"]
+
+[ext_resource type="VoxelGeneratorScript" uid="uid://jdbcaobc6lwu" path="res://generator/MyGenerator.tres" id="1_jydkl"]
+[ext_resource type="VoxelBlockyLibrary" uid="uid://dsmaa8blhcpue" path="res://blocks/library.tres" id="2_r7uav"]
+[ext_resource type="PackedScene" uid="uid://cr6tufbwxmne8" path="res://character/character.tscn" id="3_45uwf"]
+[ext_resource type="Texture2D" uid="uid://dejwk4vuacluw" path="res://generator/Epic_BlueSunset_EquiRect_flat.png" id="4_wcwyy"]
+
+[sub_resource type="VoxelMesherBlocky" id="VoxelMesherBlocky_efljv"]
+library = ExtResource("2_r7uav")
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_yuk8l"]
+panorama = ExtResource("4_wcwyy")
+
+[sub_resource type="Sky" id="Sky_tcu27"]
+sky_material = SubResource("PanoramaSkyMaterial_yuk8l")
+
+[sub_resource type="Environment" id="Environment_oux0s"]
+background_mode = 2
+sky = SubResource("Sky_tcu27")
+
+[node name="Node" type="Node"]
+
+[node name="VoxelTerrain" type="VoxelTerrain" parent="."]
+generator = ExtResource("1_jydkl")
+mesher = SubResource("VoxelMesherBlocky_efljv")
+run_stream_in_editor = false
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 0, 0)
+light_color = Color(1, 0.917647, 0.811765, 1)
+shadow_enabled = true
+shadow_opacity = 0.9
+
+[node name="character" parent="." instance=ExtResource("3_45uwf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
+_terrain_path = NodePath("../VoxelTerrain")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_oux0s")

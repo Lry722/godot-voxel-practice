@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://cr6tufbwxmne8"]
+
+[ext_resource type="Script" path="res://character/character.gd" id="1_1q5pk"]
+[ext_resource type="Script" path="res://character/Camera3D.gd" id="2_wushv"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_igr6x"]
+size = Vector3(0.8, 1.8, 0.8)
+
+[node name="character" type="Node3D"]
+script = ExtResource("1_1q5pk")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+script = ExtResource("2_wushv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_igr6x")
+
+[node name="VoxelViewer" type="VoxelViewer" parent="."]
