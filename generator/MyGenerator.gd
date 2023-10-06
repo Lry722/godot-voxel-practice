@@ -55,9 +55,10 @@ func _generate_block(out_buffer: VoxelBuffer, origin_in_voxels: Vector3i, lod: i
 				for tree in get_trees_in(chunk_pos + Vector3i(x, y, z)):
 					var pos = tree.pos + Vector3i(x, y, z) * 16
 					var tree_AABB = AABB(pos, tree.voxels.get_size())
-					pos -= tree.local_origin
-					if tree_AABB.intersection(chunk_AABB):
+					if tree_AABB.intersects(chunk_AABB):
 						voxel_tool.paste_masked(pos, tree.voxels, 1 << VoxelBuffer.CHANNEL_TYPE, VoxelBuffer.CHANNEL_TYPE, air)
+						
+	out_buffer.compress_uniform_channels()
 						
 	
 func get_height(x, z):
@@ -82,6 +83,7 @@ func get_trees_in(chunk_pos: Vector3i) -> Array:
 		new_structure.pos.z = chunk_rand.randi_range(0, 15)
 		var global_pos := chunk_pos * 16
 		new_structure.pos.y = get_height(global_pos.x + new_structure.pos.x, global_pos.z + new_structure.pos.z) - global_pos.y
+		new_structure.pos -= new_structure.local_origin
 		if new_structure.pos.y >= 0 and new_structure.pos.y <= 15 and not (chunk_pos.y == 0 and new_structure.pos.y == 0):
 			result.append(new_structure)
 		

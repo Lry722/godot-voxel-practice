@@ -17,7 +17,7 @@ var _terrain : VoxelTerrain
 
 func _ready():
 	_terrain = get_node(_terrain_path)
-	_box_mover.set_step_climbing_enabled(0.5)
+	_box_mover.set_step_climbing_enabled(1)
 	_box_mover.set_collision_mask(1)
 
 func _physics_process(delta):
@@ -35,13 +35,16 @@ func _physics_process(delta):
 		direction += right
 	if Input.is_key_pressed(KEY_A):
 		direction -= right
-		
+	
 	direction = direction.normalized()
 	_velocity = Vector3(direction.x * _speed, _velocity.y + _gravity * delta, direction.z * _speed)
 	
-	if _grounded and Input.is_key_pressed(KEY_SPACE) :
-		_velocity.y = _jump_force
-		_grounded = false
+	if _grounded :
+		if Input.is_key_pressed(KEY_SPACE) :
+			_velocity.y = _jump_force
+			_grounded = false
+		elif not direction :
+			return
 		
 	var expect_movement = _velocity * delta
 	var actual_movement = _box_mover.get_motion(position, expect_movement, _AABB, _terrain)
@@ -51,6 +54,8 @@ func _physics_process(delta):
 	
 	if expect_movement.y < actual_movement.y :
 		_grounded = true
+	elif _velocity.y != 0 :
+		_grounded = false
 		
 	if _box_mover.has_stepped_up() :
 		_velocity.y = 0
