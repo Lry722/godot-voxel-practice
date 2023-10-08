@@ -11,7 +11,7 @@
 Based on Zylann's Voxel Game example. Some features that were not included in the original example will be added in the future. The coding process is here https://www.bilibili.com/video/BV1mN411J7yv/ <br/>
 <br/>
 Implemented features:<br/>
-- Basic terrain generator with 1 noise and 1 curve
-- Basic FPS character controller
-- Generation of small structures such as trees (less than 16x16x16)
-- Select block
+Basic terrain generator with 1 noise and 1 curve<br/>
+Basic FPS character controller<br/>
+Generation of small structures such as trees (less than 16x16x16)<br/>
+Select block<br/>
