@@ -10,7 +10,7 @@ var _yaw := 0.0
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-func _input(event):
+func _unhandled_input(event):
 	if event is InputEventMouseMotion :
 		var motion = event.relative * _seneitive
 		_pitch -= motion.y
