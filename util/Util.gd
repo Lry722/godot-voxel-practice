@@ -1,4 +1,3 @@
-static var wireframe_material := preload("res://util/wireframe.tres")
 
 static func create_wireframe_mesh(model: VoxelBlockyModel) -> Mesh:
 	var collision_aabbs := model.collision_aabbs
