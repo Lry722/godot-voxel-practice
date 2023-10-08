@@ -18,7 +18,7 @@ sky_material = SubResource("PanoramaSkyMaterial_yuk8l")
 background_mode = 2
 sky = SubResource("Sky_tcu27")
 
-[node name="Node" type="Node"]
+[node name="Game" type="Node"]
 
 [node name="VoxelTerrain" type="VoxelTerrain" parent="."]
 generator = ExtResource("1_jydkl")

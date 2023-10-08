@@ -39,6 +39,8 @@ texture_filter = 0
 
 [sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_xbs40"]
 resource_name = "tall_grass"
+collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 1, 1)])
+collision_mask = 2
 material_override_0 = SubResource("StandardMaterial3D_sg0jt")
 collision_enabled_0 = true
 mesh = ExtResource("3_dma6e")
@@ -56,16 +58,20 @@ resource_name = "water_top"
 color = Color(0.67451, 0.67451, 0.67451, 1)
 transparent = true
 transparency_index = 1
+collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 0.9, 1)])
+collision_mask = 4
 material_override_0 = SubResource("StandardMaterial3D_yspch")
-collision_enabled_0 = true
+collision_enabled_0 = false
 mesh = ExtResource("4_s0rx4")
 
 [sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_mhx8w"]
 resource_name = "water_full"
 transparent = true
 transparency_index = 1
+collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 1, 1)])
+collision_mask = 4
 material_override_0 = SubResource("StandardMaterial3D_yspch")
-collision_enabled_0 = true
+collision_enabled_0 = false
 mesh = ExtResource("5_qmnfy")
 
 [sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_l82u5"]

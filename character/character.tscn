@@ -1,12 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://cr6tufbwxmne8"]
+[gd_scene load_steps=6 format=3 uid="uid://cr6tufbwxmne8"]
 
 [ext_resource type="Script" path="res://character/character.gd" id="1_1q5pk"]
 [ext_resource type="Script" path="res://character/Camera3D.gd" id="2_wushv"]
+[ext_resource type="Script" path="res://character/Interacte.gd" id="3_43wcb"]
+[ext_resource type="Texture2D" uid="uid://cuaut0tlr7m2a" path="res://character/crosshair.png" id="4_rnfjw"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_igr6x"]
 size = Vector3(0.8, 1.8, 0.8)
 
-[node name="character" type="Node3D"]
+[node name="Character" type="Node3D"]
 script = ExtResource("1_1q5pk")
 
 [node name="Camera3D" type="Camera3D" parent="."]
@@ -17,3 +19,30 @@ script = ExtResource("2_wushv")
 mesh = SubResource("BoxMesh_igr6x")
 
 [node name="VoxelViewer" type="VoxelViewer" parent="."]
+
+[node name="Interacte" type="Node" parent="." node_paths=PackedStringArray("eye")]
+script = ExtResource("3_43wcb")
+eye = NodePath("../Camera3D")
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Crosshair" type="TextureRect" parent="UI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_rnfjw")
