@@ -2,7 +2,6 @@ extends VoxelGeneratorScript
 
 var noise := FastNoiseLite.new()
 var heightmap := preload("res://generator/heightmap.tres")
-var rand := RandomNumberGenerator.new()
 var tree_generator := preload("res://generator/tree_generator.gd").new()
 
 var library := preload("res://blocks/library.tres")
@@ -21,6 +20,8 @@ func _init() :
 func _generate_block(out_buffer: VoxelBuffer, origin_in_voxels: Vector3i, lod: int):
 	var origin_height := origin_in_voxels.y
 	var chunk_pos := origin_in_voxels / 16
+	var rand := RandomNumberGenerator.new()
+	rand.seed = get_seed_in(chunk_pos)
 	
 	for x in 16:
 		for z in 16:

@@ -31,9 +31,10 @@ light_color = Color(1, 0.917647, 0.811765, 1)
 shadow_enabled = true
 shadow_opacity = 0.9
 
-[node name="character" parent="." instance=ExtResource("3_45uwf")]
+[node name="character" parent="." node_paths=PackedStringArray("_terrain") instance=ExtResource("3_45uwf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
-_terrain_path = NodePath("../VoxelTerrain")
+_max_speed = 50.0
+_terrain = NodePath("../VoxelTerrain")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_oux0s")

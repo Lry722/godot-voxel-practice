@@ -1,4 +1,4 @@
-[gd_resource type="VoxelBlockyLibrary" load_steps=16 format=3 uid="uid://dsmaa8blhcpue"]
+[gd_resource type="VoxelBlockyLibrary" load_steps=18 format=3 uid="uid://dsmaa8blhcpue"]
 
 [ext_resource type="Material" uid="uid://c4w481gwf71pt" path="res://blocks/MyMaterial.tres" id="1_p6gi0"]
 [ext_resource type="Texture2D" uid="uid://b5hsh3rlb3gfm" path="res://blocks/terrain.png" id="2_504u6"]
@@ -40,7 +40,7 @@ texture_filter = 0
 [sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_xbs40"]
 resource_name = "tall_grass"
 collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 1, 1)])
-collision_mask = 2
+collision_mask = 4
 material_override_0 = SubResource("StandardMaterial3D_sg0jt")
 collision_enabled_0 = true
 mesh = ExtResource("3_dma6e")
@@ -59,7 +59,7 @@ color = Color(0.67451, 0.67451, 0.67451, 1)
 transparent = true
 transparency_index = 1
 collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 0.9, 1)])
-collision_mask = 4
+collision_mask = 8
 material_override_0 = SubResource("StandardMaterial3D_yspch")
 collision_enabled_0 = false
 mesh = ExtResource("4_s0rx4")
@@ -69,20 +69,10 @@ resource_name = "water_full"
 transparent = true
 transparency_index = 1
 collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 1, 1)])
-collision_mask = 4
+collision_mask = 8
 material_override_0 = SubResource("StandardMaterial3D_yspch")
 collision_enabled_0 = false
 mesh = ExtResource("5_qmnfy")
-
-[sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_l82u5"]
-resource_name = "log"
-material_override_0 = ExtResource("1_p6gi0")
-tile_left = Vector2i(2, 0)
-tile_right = Vector2i(2, 0)
-tile_bottom = Vector2i(3, 0)
-tile_top = Vector2i(3, 0)
-tile_back = Vector2i(2, 0)
-tile_front = Vector2i(2, 0)
 
 [sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_y7obb"]
 resource_name = "leaves"
@@ -96,5 +86,35 @@ tile_top = Vector2i(0, 2)
 tile_back = Vector2i(0, 2)
 tile_front = Vector2i(0, 2)
 
+[sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_l82u5"]
+resource_name = "log_X"
+material_override_0 = ExtResource("1_p6gi0")
+tile_left = Vector2i(3, 0)
+tile_right = Vector2i(3, 0)
+tile_bottom = Vector2i(2, 0)
+tile_top = Vector2i(2, 0)
+tile_back = Vector2i(2, 0)
+tile_front = Vector2i(2, 0)
+
+[sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_eqy18"]
+resource_name = "log_Y"
+material_override_0 = ExtResource("1_p6gi0")
+tile_left = Vector2i(2, 0)
+tile_right = Vector2i(2, 0)
+tile_bottom = Vector2i(3, 0)
+tile_top = Vector2i(3, 0)
+tile_back = Vector2i(2, 0)
+tile_front = Vector2i(2, 0)
+
+[sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_dynsl"]
+resource_name = "log_Z"
+material_override_0 = ExtResource("1_p6gi0")
+tile_left = Vector2i(2, 0)
+tile_right = Vector2i(2, 0)
+tile_bottom = Vector2i(2, 0)
+tile_top = Vector2i(2, 0)
+tile_back = Vector2i(3, 0)
+tile_front = Vector2i(3, 0)
+
 [resource]
-models = Array[VoxelBlockyModel]([SubResource("VoxelBlockyModelEmpty_d4j4b"), SubResource("VoxelBlockyModelCube_sfres"), SubResource("VoxelBlockyModelCube_8pr5c"), SubResource("VoxelBlockyModelMesh_xbs40"), SubResource("VoxelBlockyModelMesh_lwgkl"), SubResource("VoxelBlockyModelMesh_mhx8w"), SubResource("VoxelBlockyModelCube_l82u5"), SubResource("VoxelBlockyModelCube_y7obb")])
+models = Array[VoxelBlockyModel]([SubResource("VoxelBlockyModelEmpty_d4j4b"), SubResource("VoxelBlockyModelCube_sfres"), SubResource("VoxelBlockyModelCube_8pr5c"), SubResource("VoxelBlockyModelMesh_xbs40"), SubResource("VoxelBlockyModelMesh_lwgkl"), SubResource("VoxelBlockyModelMesh_mhx8w"), SubResource("VoxelBlockyModelCube_y7obb"), SubResource("VoxelBlockyModelCube_l82u5"), SubResource("VoxelBlockyModelCube_eqy18"), SubResource("VoxelBlockyModelCube_dynsl")])

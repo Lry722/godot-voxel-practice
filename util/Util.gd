@@ -1,3 +1,4 @@
+class_name Util
 
 static func create_wireframe_mesh(model: VoxelBlockyModel) -> Mesh:
 	var collision_aabbs := model.collision_aabbs
@@ -29,3 +30,45 @@ static func create_wireframe_mesh(model: VoxelBlockyModel) -> Mesh:
 	var mesh = ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
 	return mesh
+
+static func get_variants(block_info : Dictionary) -> Array:
+	var result = []
+	
+	var block_name = block_info.name
+	if block_info.with == 'None':
+		result = [block_name]
+	elif block_info.with == '3Axis':
+		result = [block_name + '_X', block_name + '_Y', block_name + '_Z']
+	elif block_info.with == '6Axis':
+		result = [block_name + '_X', block_name + '_Y', block_name + '_Z', 
+				  block_name + '_NX', block_name + '_NY', block_name + '_NZ']
+	else:
+		result= [block_name + '_RX', block_name + '_RZ', block_name + '_RNX', block_name + '_RNZ']
+	
+	return result
+	
+static func get_default_attributes(attributes : Array) -> String:
+	var result = ''
+	
+	for attribute in attributes:
+		result += '_' + attribute[0]
+	
+	return result
+	
+static func get_axis(orientation : Vector3, type : String) -> String:
+	if type == 'None':
+		return ''
+	
+	var longest_axis := 'X'
+	var longest_length := orientation.x
+	if type != 'rotation' and abs(orientation.y) > abs(longest_length):
+		longest_axis = 'Y'
+		longest_length = orientation.y
+	if abs(orientation.z) > abs(longest_length):
+		longest_axis = 'Z'
+		longest_length = orientation.z
+	
+	if type != '3Axis' and longest_length < 0:
+		return '_N' + longest_axis
+	else:
+		return '_' + longest_axis

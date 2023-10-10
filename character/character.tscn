@@ -11,18 +11,19 @@ size = Vector3(0.8, 1.8, 0.8)
 [node name="Character" type="Node3D"]
 script = ExtResource("1_1q5pk")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Eyes" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
 script = ExtResource("2_wushv")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="Body" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_igr6x")
 
 [node name="VoxelViewer" type="VoxelViewer" parent="."]
 
-[node name="Interacte" type="Node" parent="." node_paths=PackedStringArray("eye")]
+[node name="Interacte" type="Node" parent="." node_paths=PackedStringArray("eyes", "body")]
 script = ExtResource("3_43wcb")
-eye = NodePath("../Camera3D")
+eyes = NodePath("../Eyes")
+body = NodePath("../Body")
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 3

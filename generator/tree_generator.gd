@@ -1,7 +1,7 @@
 const Structure := preload("res://generator/Structure.gd")
 
 var library := preload("res://blocks/library.tres")
-var log := library.get_model_index_from_resource_name('log')
+var log := library.get_model_index_from_resource_name('log_Y')
 var leaves := library.get_model_index_from_resource_name('leaves')
 
 var tree := VoxelBuffer.new()

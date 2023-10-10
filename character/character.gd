@@ -1,11 +1,13 @@
 extends Node3D
 
 @export var _speed := 5.0
+@export var _max_speed := 40.0
 @export var _gravity := -40.0
 @export var _jump_force := 10.0
-@export var _terrain_path : NodePath
+@export var _terrain : VoxelTerrain
 
-@onready var _camera = $Camera3D
+@onready var _camera = $Eyes
+@onready var _body = $Body
 
 var _velocity = Vector3()
 var _grounded := false
@@ -13,10 +15,9 @@ var _box_mover = VoxelBoxMover.new()
 
 var _size = Vector3(0.8, 1.8, 0.8)
 var _AABB = AABB(_size * 0.5 * -1, _size)
-var _terrain : VoxelTerrain
 
 func _ready():
-	_terrain = get_node(_terrain_path)
+	_body.custom_aabb = _AABB
 	_box_mover.set_step_climbing_enabled(1)
 	_box_mover.set_collision_mask(1)
 
@@ -38,17 +39,17 @@ func _physics_process(delta):
 	
 	direction = direction.normalized()
 	_velocity = Vector3(direction.x * _speed, _velocity.y + _gravity * delta, direction.z * _speed)
+	if _velocity.length() > _max_speed:
+		_velocity.y -= _gravity * delta
 	
 	if _grounded :
 		if Input.is_key_pressed(KEY_SPACE) :
 			_velocity.y = _jump_force
 			_grounded = false
-		elif not direction :
-			return
 		
 	var expect_movement = _velocity * delta
 	var actual_movement = _box_mover.get_motion(position, expect_movement, _AABB, _terrain)
-	global_translate(actual_movement)
+	translate(actual_movement)
 	
 	_velocity = actual_movement / delta
 	

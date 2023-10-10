@@ -1,0 +1,34 @@
+{
+	"blocks":[
+		{
+			"has_script": false,
+			"name": "dirt",
+			"with": "None",
+			"attributes": []
+		},
+		{
+			"has_script": false,
+			"name": "grass",
+			"with": "None",
+			"attributes": []
+		},
+		{
+			"has_script": true,
+			"name": "tall_grass",
+			"with": "None",
+			"attributes": []
+		},
+		{
+			"has_script": false,
+			"name": "leaves",
+			"with": "None",
+			"attributes": []
+		},
+		{
+			"has_script": false,
+			"name": "log",
+			"with": "3Axis",
+			"attributes": []
+		}
+	]
+}
