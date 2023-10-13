@@ -1,17 +1,20 @@
-[gd_resource type="VoxelBlockyLibrary" load_steps=18 format=3 uid="uid://dsmaa8blhcpue"]
+[gd_resource type="VoxelBlockyLibrary" load_steps=22 format=3 uid="uid://dsmaa8blhcpue"]
 
-[ext_resource type="Material" uid="uid://c4w481gwf71pt" path="res://blocks/MyMaterial.tres" id="1_p6gi0"]
+[ext_resource type="Material" uid="uid://c4w481gwf71pt" path="res://blocks/BlockMaterial.tres" id="1_bbp0j"]
 [ext_resource type="Texture2D" uid="uid://b5hsh3rlb3gfm" path="res://blocks/terrain.png" id="2_504u6"]
 [ext_resource type="ArrayMesh" uid="uid://cu65rchmr327u" path="res://blocks/tall_grass/tall_grass.obj" id="3_dma6e"]
 [ext_resource type="ArrayMesh" uid="uid://c4mn047wl05hi" path="res://blocks/water/water_top.obj" id="4_s0rx4"]
 [ext_resource type="ArrayMesh" uid="uid://cef2cuxluo6l0" path="res://blocks/water/water_full.obj" id="5_qmnfy"]
+[ext_resource type="ArrayMesh" uid="uid://b7cvpsjkwo013" path="res://blocks/stairs/stairs.obj" id="6_e83o1"]
+[ext_resource type="ArrayMesh" uid="uid://rnyxfcd688vs" path="res://blocks/stairs/stairs_leftDot.obj" id="7_uim7p"]
+[ext_resource type="ArrayMesh" uid="uid://lcgxqendirhe" path="res://blocks/stairs/stairs_rightDot.obj" id="8_tdmrs"]
 
 [sub_resource type="VoxelBlockyModelEmpty" id="VoxelBlockyModelEmpty_d4j4b"]
 resource_name = "air"
 
 [sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_sfres"]
 resource_name = "dirt"
-material_override_0 = ExtResource("1_p6gi0")
+material_override_0 = ExtResource("1_bbp0j")
 tile_left = Vector2i(1, 0)
 tile_right = Vector2i(1, 0)
 tile_bottom = Vector2i(1, 0)
@@ -21,7 +24,7 @@ tile_front = Vector2i(1, 0)
 
 [sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_8pr5c"]
 resource_name = "grass"
-material_override_0 = ExtResource("1_p6gi0")
+material_override_0 = ExtResource("1_bbp0j")
 tile_left = Vector2i(0, 1)
 tile_right = Vector2i(0, 1)
 tile_bottom = Vector2i(1, 0)
@@ -86,29 +89,9 @@ tile_top = Vector2i(0, 2)
 tile_back = Vector2i(0, 2)
 tile_front = Vector2i(0, 2)
 
-[sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_l82u5"]
-resource_name = "log_X"
-material_override_0 = ExtResource("1_p6gi0")
-tile_left = Vector2i(3, 0)
-tile_right = Vector2i(3, 0)
-tile_bottom = Vector2i(2, 0)
-tile_top = Vector2i(2, 0)
-tile_back = Vector2i(2, 0)
-tile_front = Vector2i(2, 0)
-
 [sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_eqy18"]
-resource_name = "log_Y"
-material_override_0 = ExtResource("1_p6gi0")
-tile_left = Vector2i(2, 0)
-tile_right = Vector2i(2, 0)
-tile_bottom = Vector2i(3, 0)
-tile_top = Vector2i(3, 0)
-tile_back = Vector2i(2, 0)
-tile_front = Vector2i(2, 0)
-
-[sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_dynsl"]
-resource_name = "log_Z"
-material_override_0 = ExtResource("1_p6gi0")
+resource_name = "log"
+material_override_0 = ExtResource("1_bbp0j")
 tile_left = Vector2i(2, 0)
 tile_right = Vector2i(2, 0)
 tile_bottom = Vector2i(2, 0)
@@ -116,5 +99,26 @@ tile_top = Vector2i(2, 0)
 tile_back = Vector2i(3, 0)
 tile_front = Vector2i(3, 0)
 
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_4tp72"]
+resource_name = "stairs_default"
+collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 0.5, 1), AABB(0, 0.5, 0, 1, 0.5, 0.5)])
+material_override_0 = ExtResource("1_bbp0j")
+collision_enabled_0 = true
+mesh = ExtResource("6_e83o1")
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_cpvis"]
+resource_name = "stairs_leftDot"
+collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 0.5, 1), AABB(0, 0.5, 0, 0.5, 0.5, 0.5)])
+material_override_0 = ExtResource("1_bbp0j")
+collision_enabled_0 = true
+mesh = ExtResource("7_uim7p")
+
+[sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_gbqlf"]
+resource_name = "stairs_rightDot"
+collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 0.5, 1), AABB(0.5, 0.5, 0, 0.5, 0.5, 0.5)])
+material_override_0 = ExtResource("1_bbp0j")
+collision_enabled_0 = true
+mesh = ExtResource("8_tdmrs")
+
 [resource]
-models = Array[VoxelBlockyModel]([SubResource("VoxelBlockyModelEmpty_d4j4b"), SubResource("VoxelBlockyModelCube_sfres"), SubResource("VoxelBlockyModelCube_8pr5c"), SubResource("VoxelBlockyModelMesh_xbs40"), SubResource("VoxelBlockyModelMesh_lwgkl"), SubResource("VoxelBlockyModelMesh_mhx8w"), SubResource("VoxelBlockyModelCube_y7obb"), SubResource("VoxelBlockyModelCube_l82u5"), SubResource("VoxelBlockyModelCube_eqy18"), SubResource("VoxelBlockyModelCube_dynsl")])
+models = Array[VoxelBlockyModel]([SubResource("VoxelBlockyModelEmpty_d4j4b"), SubResource("VoxelBlockyModelCube_sfres"), SubResource("VoxelBlockyModelCube_8pr5c"), SubResource("VoxelBlockyModelMesh_xbs40"), SubResource("VoxelBlockyModelMesh_lwgkl"), SubResource("VoxelBlockyModelMesh_mhx8w"), SubResource("VoxelBlockyModelCube_y7obb"), SubResource("VoxelBlockyModelCube_eqy18"), SubResource("VoxelBlockyModelMesh_4tp72"), SubResource("VoxelBlockyModelMesh_cpvis"), SubResource("VoxelBlockyModelMesh_gbqlf")])

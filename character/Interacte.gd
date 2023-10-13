@@ -1,7 +1,5 @@
 extends Node
 
-var Util := preload("res://util/Util.gd")
-
 @export var eyes : Camera3D
 @export var body : MeshInstance3D
 @export var operation_range := 5.0
@@ -30,7 +28,7 @@ func _physics_process(delta):
 	elif Input.is_action_just_pressed("place"):
 		var placeable_voxel_and_normal = get_placeable_voxel()
 		if placeable_voxel_and_normal:
-			Blocks.place(4, placeable_voxel_and_normal[0], placeable_voxel_and_normal[1], terrain_tool)
+			Blocks.place(5, placeable_voxel_and_normal[0], placeable_voxel_and_normal[1], eyes.basis.z, terrain_tool)
 	
 func get_pointed_voxel():
 	var mouse_pos = get_viewport().get_mouse_position()
@@ -51,14 +49,14 @@ func get_placeable_voxel():
 	var hit := terrain_tool.raycast(origin, forward, operation_range, 3)
 	if hit and not AABB(body.custom_aabb.position + get_parent().position, body.custom_aabb.size).intersects(
 				   AABB(hit.previous_position, Vector3(1, 1, 1))):
-		return [hit.previous_position - hit.position, hit.previous_position]
+		return [hit.previous_position, hit.previous_position - hit.position]
 	else:
 		return null
 
 func update_cursor(pointed_voxel: Vector3i):
 	var pointed_voxel_id := terrain_tool.get_voxel(pointed_voxel)
 	if pointed_voxel_id != cursor_voxel_id:
-		var model := Blocks.get_model_by_index(pointed_voxel_id)
+		var model := Blocks.get_variant_by_index(pointed_voxel_id)
 		cursor.mesh = Util.create_wireframe_mesh(model)
 		cursor_voxel_id = pointed_voxel_id
 	cursor.position = Vector3(pointed_voxel) - Vector3(1, 1, 1) * cursor_margin

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://lcgxqendirhe"
+path="res://.godot/imported/stairs_rightDot.obj-5470694f755bf11b38c61a0a981c45ce.mesh"
+
+[deps]
+
+files=["res://.godot/imported/stairs_rightDot.obj-5470694f755bf11b38c61a0a981c45ce.mesh"]
+
+source_file="res://blocks/stairs/stairs_rightDot.obj"
+dest_files=["res://.godot/imported/stairs_rightDot.obj-5470694f755bf11b38c61a0a981c45ce.mesh", "res://.godot/imported/stairs_rightDot.obj-5470694f755bf11b38c61a0a981c45ce.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true

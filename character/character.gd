@@ -59,5 +59,5 @@ func _physics_process(delta):
 		_grounded = false
 		
 	if _box_mover.has_stepped_up() :
-		_velocity.y = 0
+		_velocity.y = _jump_force / 4
 		_grounded = true

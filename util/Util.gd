@@ -1,5 +1,35 @@
 class_name Util
 
+const opposite = {
+	'X': 'NX',
+	'Y': 'NY',
+	'Z': 'NZ',
+	'NX': 'X',
+	'NY': 'Y',
+	'NZ': 'Z',
+	'DX': 'DNX',
+	'DY': 'DNY',
+	'DZ': 'DNZ',
+	'DNX': 'DX',
+	'DNY': 'DY',
+	'DNZ': 'DZ',
+}
+
+const orientation_to_vector = {
+	'X': Vector3i(1, 0, 0),
+	'Y': Vector3i(0, 1, 0),
+	'Z': Vector3i(0, 0, 1),
+	'NX': Vector3i(-1, 0, 0),
+	'NY': Vector3i(0, -1, 0),
+	'NZ': Vector3i(0, 0, -1),
+	'DX': Vector3i(1, 0, 0),
+	'DY': Vector3i(0, 1, 0),
+	'DZ': Vector3i(0, 0, 1),
+	'DNX': Vector3i(-1, 0, 0),
+	'DNY': Vector3i(0, -1, 0),
+	'DNZ': Vector3i(0, 0, -1),
+}
+
 static func create_wireframe_mesh(model: VoxelBlockyModel) -> Mesh:
 	var collision_aabbs := model.collision_aabbs
 	
@@ -30,27 +60,115 @@ static func create_wireframe_mesh(model: VoxelBlockyModel) -> Mesh:
 	var mesh = ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
 	return mesh
+	
+static func get_attributes_variants(block_info : Dictionary) -> Array:
+	var attributes = block_info.attributes
 
-static func get_variants(block_info : Dictionary) -> Array:
-	var result = []
+	var result = [block_info.name]
+	if block_info.attributes.is_empty():
+		return result
 	
-	var block_name = block_info.name
-	if block_info.with == 'None':
-		result = [block_name]
-	elif block_info.with == '3Axis':
-		result = [block_name + '_X', block_name + '_Y', block_name + '_Z']
-	elif block_info.with == '6Axis':
-		result = [block_name + '_X', block_name + '_Y', block_name + '_Z', 
-				  block_name + '_NX', block_name + '_NY', block_name + '_NZ']
-	elif block_info.with == '2Axis':
-		result= [block_name + '_X', block_name + '_Z']
-	elif block_info.with == '4Axis':
-		result= [block_name + '_X', block_name + '_Z', 
-				 block_name + '_NX', block_name + '_NZ']
-				
+	var stack := []
+	stack.resize(attributes.size())
+	stack.fill(-1)
+	var top := 0
 	
+	while top >= 0:
+		if top == attributes.size():
+			var comb = ''
+			for i in stack.size():
+				comb += block_info.name + '_' + String(attributes[i][stack[i]])
+			result.append(comb)
+			top -= 1
+		elif attributes[top].size() > stack[top]:
+			stack[top] += 1
+			if attributes[top].size() == stack[top]:
+				stack[top] = -1
+				top -= 1
+			else:
+				top += 1
+		else:
+			assert(false)
 	
 	return result
+	
+static func get_orientation(normal : Vector3i, sight_dir : Vector3, orientation_type : int) -> String:
+	if orientation_type == 0:
+		return ''
+		
+	var result := ''
+	
+	if orientation_type == 2:
+		sight_dir.y = 0
+		match sight_dir.abs().max_axis_index():
+			Vector3.AXIS_X:
+				result = '_X'
+			Vector3i.AXIS_Z:
+				result = '_Z'
+	elif orientation_type == 3:
+		match normal.abs().max_axis_index():
+			Vector3.AXIS_X:
+				result = '_X'
+			Vector3.AXIS_Y:
+				result = '_Y'
+			Vector3i.AXIS_Z:
+				result = '_Z'
+	elif orientation_type == 4:
+		sight_dir.y = 0
+		match sight_dir.abs().max_axis_index():
+			Vector3.AXIS_X:
+				if sight_dir.x < 0:
+					result = '_NX'
+				else:
+					result = '_X'
+			Vector3.AXIS_Z:
+				if sight_dir.z < 0:
+					result = '_NZ'
+				else:
+					result = '_Z'
+	elif orientation_type == 6:
+		match normal.max_axis_index():
+			Vector3.AXIS_X:
+				if normal.x < 0:
+					result = '_NX'
+				else:
+					result = '_X'
+			Vector3.AXIS_Y:
+				if normal.y < 0:
+					result = '_NY'
+				else:
+					result = '_Y'
+			Vector3.AXIS_Z:
+				if normal.z < 0:
+					result = '_NZ'
+				else:
+					result = '_Z'
+	elif orientation_type == 8:
+		if normal.y == 1:
+			result = '_'
+		else:
+			result = '_D'
+		sight_dir.y = 0
+		match sight_dir.abs().max_axis_index():
+			Vector3.AXIS_X:
+				if sight_dir.x < 0:
+					result += 'NX'
+				else:
+					result += 'X'
+			Vector3.AXIS_Z:
+				if sight_dir.z < 0:
+					result += 'NZ'
+				else:
+					result += 'Z'
+		
+	else:
+		assert(false, '未知的orientation type %d' % orientation_type)
+	
+	return result
+	
+static func get_orientation_by_name(name : String) -> String:
+	var temp := name.split('_')
+	return temp[temp.size() - 1]
 	
 static func get_default_attributes(attributes : Array) -> String:
 	var result = ''
@@ -59,34 +177,3 @@ static func get_default_attributes(attributes : Array) -> String:
 		result += '_' + attribute[0]
 	
 	return result
-	
-#static func get_all_attributes(attributes : Array) -> Array:
-	#var result = []
-	#
-	#var stack := [0]
-	#stack.resize(attributes.size())
-	#var top = 0
-	#var cur_combination = ''
-	#
-	#while top >= 0:
-		#
-	#
-	#return result
-	
-static func get_axis(orientation : Vector3, type : String) -> String:
-	if type == 'None':
-		return ''
-	
-	var longest_axis := 'X'
-	var longest_length := orientation.x
-	if type != '2Axis' and type != '4Axis' and abs(orientation.y) > abs(longest_length):
-		longest_axis = 'Y'
-		longest_length = orientation.y
-	if abs(orientation.z) > abs(longest_length):
-		longest_axis = 'Z'
-		longest_length = orientation.z
-	
-	if type != '2Axis' and type != '3Axis' and longest_length < 0:
-		return '_N' + longest_axis
-	else:
-		return '_' + longest_axis
