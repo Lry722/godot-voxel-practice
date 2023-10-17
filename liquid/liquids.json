@@ -1,0 +1,11 @@
+{
+	"liquids":[
+		{
+			"has_script": false,
+			"name": "water",
+			"fluidity": 125,
+			"viscosity": 125,
+			"interval": 0.2
+		}
+	]
+}

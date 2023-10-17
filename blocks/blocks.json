@@ -37,6 +37,18 @@
 			"attributes": [
 				["default", "leftDot", "rightDot"]
 			]
+		},
+		{
+			"has_script": false,
+			"name": "water_full",
+			"orientation_type": 0,
+			"attributes": []
+		},
+		{
+			"has_script": false,
+			"name": "water_top",
+			"orientation_type": 0,
+			"attributes": []
 		}
 	]
 }

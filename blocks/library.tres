@@ -1,8 +1,9 @@
-[gd_resource type="VoxelBlockyLibrary" load_steps=22 format=3 uid="uid://dsmaa8blhcpue"]
+[gd_resource type="VoxelBlockyLibrary" load_steps=24 format=3 uid="uid://dsmaa8blhcpue"]
 
-[ext_resource type="Material" uid="uid://c4w481gwf71pt" path="res://blocks/BlockMaterial.tres" id="1_bbp0j"]
+[ext_resource type="Material" uid="uid://c4w481gwf71pt" path="res://blocks/block_material.tres" id="1_peb6p"]
 [ext_resource type="Texture2D" uid="uid://b5hsh3rlb3gfm" path="res://blocks/terrain.png" id="2_504u6"]
 [ext_resource type="ArrayMesh" uid="uid://cu65rchmr327u" path="res://blocks/tall_grass/tall_grass.obj" id="3_dma6e"]
+[ext_resource type="Material" uid="uid://bnn3o2hdt760v" path="res://liquid/liquid_material.tres" id="4_401pa"]
 [ext_resource type="ArrayMesh" uid="uid://c4mn047wl05hi" path="res://blocks/water/water_top.obj" id="4_s0rx4"]
 [ext_resource type="ArrayMesh" uid="uid://cef2cuxluo6l0" path="res://blocks/water/water_full.obj" id="5_qmnfy"]
 [ext_resource type="ArrayMesh" uid="uid://b7cvpsjkwo013" path="res://blocks/stairs/stairs.obj" id="6_e83o1"]
@@ -14,7 +15,7 @@ resource_name = "air"
 
 [sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_sfres"]
 resource_name = "dirt"
-material_override_0 = ExtResource("1_bbp0j")
+material_override_0 = ExtResource("1_peb6p")
 tile_left = Vector2i(1, 0)
 tile_right = Vector2i(1, 0)
 tile_bottom = Vector2i(1, 0)
@@ -24,7 +25,7 @@ tile_front = Vector2i(1, 0)
 
 [sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_8pr5c"]
 resource_name = "grass"
-material_override_0 = ExtResource("1_bbp0j")
+material_override_0 = ExtResource("1_peb6p")
 tile_left = Vector2i(0, 1)
 tile_right = Vector2i(0, 1)
 tile_bottom = Vector2i(1, 0)
@@ -48,13 +49,58 @@ material_override_0 = SubResource("StandardMaterial3D_sg0jt")
 collision_enabled_0 = true
 mesh = ExtResource("3_dma6e")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yspch"]
-transparency = 1
-cull_mode = 2
-vertex_color_use_as_albedo = true
-albedo_texture = ExtResource("2_504u6")
-roughness = 0.0
-texture_filter = 0
+[sub_resource type="Shader" id="Shader_vfx0s"]
+code = "// NOTE: Shader automatically converted from Godot Engine 4.1.2.stable's StandardMaterial3D.
+
+shader_type spatial;
+render_mode blend_mix,depth_draw_opaque,cull_disabled,diffuse_burley,specular_schlick_ggx;
+uniform vec4 albedo : source_color;
+uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
+uniform float point_size : hint_range(0,128);
+uniform float roughness : hint_range(0,1);
+uniform sampler2D texture_metallic : hint_default_white,filter_nearest,repeat_enable;
+uniform vec4 metallic_texture_channel;
+uniform sampler2D texture_roughness : hint_roughness_r,filter_nearest,repeat_enable;
+uniform float specular;
+uniform float metallic;
+uniform vec3 uv1_scale;
+uniform vec3 uv1_offset;
+uniform vec3 uv2_scale;
+uniform vec3 uv2_offset;
+
+void vertex() {
+	UV=UV*uv1_scale.xy+uv1_offset.xy;
+}
+
+void fragment() {
+	vec2 base_uv = UV;
+	vec4 albedo_tex = texture(texture_albedo,base_uv);
+	albedo_tex *= COLOR;
+	ALBEDO = albedo.rgb * albedo_tex.rgb;
+	float metallic_tex = dot(texture(texture_metallic,base_uv),metallic_texture_channel);
+	METALLIC = metallic_tex * metallic;
+	vec4 roughness_texture_channel = vec4(1.0,0.0,0.0,0.0);
+	float roughness_tex = dot(texture(texture_roughness,base_uv),roughness_texture_channel);
+	ROUGHNESS = roughness_tex * roughness;
+	SPECULAR = specular;
+	ALPHA *= albedo.a * albedo_tex.a;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dv5v1"]
+render_priority = 0
+shader = SubResource("Shader_vfx0s")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/point_size = 1.0
+shader_parameter/roughness = 0.0
+shader_parameter/metallic_texture_channel = null
+shader_parameter/specular = 0.0
+shader_parameter/metallic = 0.0
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)
+shader_parameter/uv2_scale = Vector3(1, 1, 1)
+shader_parameter/uv2_offset = Vector3(0, 0, 0)
+shader_parameter/texture_albedo = ExtResource("2_504u6")
 
 [sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_lwgkl"]
 resource_name = "water_top"
@@ -63,7 +109,7 @@ transparent = true
 transparency_index = 1
 collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 0.9, 1)])
 collision_mask = 8
-material_override_0 = SubResource("StandardMaterial3D_yspch")
+material_override_0 = SubResource("ShaderMaterial_dv5v1")
 collision_enabled_0 = false
 mesh = ExtResource("4_s0rx4")
 
@@ -73,7 +119,7 @@ transparent = true
 transparency_index = 1
 collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 1, 1)])
 collision_mask = 8
-material_override_0 = SubResource("StandardMaterial3D_yspch")
+material_override_0 = ExtResource("4_401pa")
 collision_enabled_0 = false
 mesh = ExtResource("5_qmnfy")
 
@@ -91,7 +137,7 @@ tile_front = Vector2i(0, 2)
 
 [sub_resource type="VoxelBlockyModelCube" id="VoxelBlockyModelCube_eqy18"]
 resource_name = "log"
-material_override_0 = ExtResource("1_bbp0j")
+material_override_0 = ExtResource("1_peb6p")
 tile_left = Vector2i(2, 0)
 tile_right = Vector2i(2, 0)
 tile_bottom = Vector2i(2, 0)
@@ -102,21 +148,21 @@ tile_front = Vector2i(3, 0)
 [sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_4tp72"]
 resource_name = "stairs_default"
 collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 0.5, 1), AABB(0, 0.5, 0, 1, 0.5, 0.5)])
-material_override_0 = ExtResource("1_bbp0j")
+material_override_0 = ExtResource("1_peb6p")
 collision_enabled_0 = true
 mesh = ExtResource("6_e83o1")
 
 [sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_cpvis"]
 resource_name = "stairs_leftDot"
 collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 0.5, 1), AABB(0, 0.5, 0, 0.5, 0.5, 0.5)])
-material_override_0 = ExtResource("1_bbp0j")
+material_override_0 = ExtResource("1_peb6p")
 collision_enabled_0 = true
 mesh = ExtResource("7_uim7p")
 
 [sub_resource type="VoxelBlockyModelMesh" id="VoxelBlockyModelMesh_gbqlf"]
 resource_name = "stairs_rightDot"
 collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 0.5, 1), AABB(0.5, 0.5, 0, 0.5, 0.5, 0.5)])
-material_override_0 = ExtResource("1_bbp0j")
+material_override_0 = ExtResource("1_peb6p")
 collision_enabled_0 = true
 mesh = ExtResource("8_tdmrs")
 

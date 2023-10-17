@@ -2,7 +2,7 @@
 
 [ext_resource type="VoxelGeneratorScript" uid="uid://jdbcaobc6lwu" path="res://generator/MyGenerator.tres" id="1_jydkl"]
 [ext_resource type="VoxelBlockyLibrary" uid="uid://dsmaa8blhcpue" path="res://blocks/library.tres" id="2_r7uav"]
-[ext_resource type="PackedScene" uid="uid://cr6tufbwxmne8" path="res://character/character.tscn" id="3_45uwf"]
+[ext_resource type="PackedScene" uid="uid://di0ajml82pym3" path="res://character/character.tscn" id="3_45uwf"]
 [ext_resource type="Texture2D" uid="uid://dejwk4vuacluw" path="res://generator/Epic_BlueSunset_EquiRect_flat.png" id="4_wcwyy"]
 
 [sub_resource type="VoxelMesherBlocky" id="VoxelMesherBlocky_efljv"]

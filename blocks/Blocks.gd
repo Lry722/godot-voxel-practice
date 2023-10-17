@@ -1,7 +1,7 @@
 extends Node
 
 var library := preload("res://blocks/library.tres")
-var default_script := preload("res://blocks/Block.gd").new()
+var default_script := preload("res://blocks/block.gd").new()
 var blocks := []
 var variant_to_block = []
 
@@ -14,12 +14,11 @@ func _init():
 		else:
 			blocks.append(Block.new())
 		var block : Block = blocks.back()
-		block.index = blocks.size() - 1
+		block.index = blocks.size() - 1	
 		block.name = block_info.name
 		block.orientation_type = block_info.orientation_type
 		block.attributes = block_info.attributes
 		var variants = create_orientations_variants(block_info)
-		print(variants)
 		for variant in variants:
 			var variant_index = library.get_model_index_from_resource_name(variant)
 			if variant_index >= variant_to_block.size():
@@ -58,6 +57,14 @@ func get_variant_by_name(name : String) -> VoxelBlockyModel:
 
 func get_block_index_by_variant_index(index : int) -> int:
 	return variant_to_block[index]
+
+func get_default_blocks() -> Dictionary:
+	var result = {
+		"air": 0
+	}
+	for block in blocks:
+		result[block.name] = library.get_model_index_from_resource_name(block.name + Util.get_default_attributes(block.attributes))
+	return result
 
 func create_orientations_variants(block_info : Dictionary) -> Array:
 	var orientations = []

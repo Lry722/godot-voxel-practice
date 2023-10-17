@@ -4,13 +4,7 @@ var noise := FastNoiseLite.new()
 var heightmap := preload("res://generator/heightmap.tres")
 var tree_generator := preload("res://generator/tree_generator.gd").new()
 
-var library := preload("res://blocks/library.tres")
-var air = library.get_model_index_from_resource_name('air')
-var dirt = library.get_model_index_from_resource_name('dirt')
-var grass = library.get_model_index_from_resource_name('grass')
-var tall_grass = library.get_model_index_from_resource_name('tall_grass')
-var water_top = library.get_model_index_from_resource_name('water_top')
-var water_full = library.get_model_index_from_resource_name('water_full')
+var default_blocks = Blocks.get_default_blocks()
 
 func _init() :
 	noise.frequency = 1.0 / 256.0
@@ -29,24 +23,24 @@ func _generate_block(out_buffer: VoxelBuffer, origin_in_voxels: Vector3i, lod: i
 			
 			#泥土，草方块，草
 			if relative_height >= 16 :
-				out_buffer.fill_area(dirt, Vector3i(x, 0, z), Vector3i(x + 1, 16, z + 1), VoxelBuffer.CHANNEL_TYPE)
+				out_buffer.fill_area(default_blocks.dirt, Vector3i(x, 0, z), Vector3i(x + 1, 16, z + 1), VoxelBuffer.CHANNEL_TYPE)
 			elif relative_height >= 0 :
-				out_buffer.fill_area(dirt, Vector3i(x, 0, z), Vector3i(x + 1, relative_height + 1, z + 1), VoxelBuffer.CHANNEL_TYPE)
+				out_buffer.fill_area(default_blocks.dirt, Vector3i(x, 0, z), Vector3i(x + 1, relative_height + 1, z + 1), VoxelBuffer.CHANNEL_TYPE)
 				if origin_height >= 0:
-					out_buffer.set_voxel(grass, x, relative_height, z, VoxelBuffer.CHANNEL_TYPE)
+					out_buffer.set_voxel(default_blocks.grass, x, relative_height, z, VoxelBuffer.CHANNEL_TYPE)
 					if rand.randf() < 0.1 and relative_height + 1 < 16 :
-						out_buffer.set_voxel(tall_grass, x, relative_height + 1, z, VoxelBuffer.CHANNEL_TYPE)
+						out_buffer.set_voxel(default_blocks.tall_grass, x, relative_height + 1, z, VoxelBuffer.CHANNEL_TYPE)
 
 			#水	
 			if origin_height < 0:
 				if relative_height < 0 :
-					out_buffer.fill_area(water_full, Vector3i(x, 0, z), Vector3i(x + 1, 16, z + 1), VoxelBuffer.CHANNEL_TYPE)
+					out_buffer.fill_area(default_blocks.water_full, Vector3i(x, 0, z), Vector3i(x + 1, 16, z + 1), VoxelBuffer.CHANNEL_TYPE)
 				elif relative_height < 16 :
-					out_buffer.fill_area(water_full, Vector3i(x, relative_height + 1, z), Vector3i(x + 1, 16, z + 1), VoxelBuffer.CHANNEL_TYPE)
+					out_buffer.fill_area(default_blocks.water_full, Vector3i(x, relative_height + 1, z), Vector3i(x + 1, 16, z + 1), VoxelBuffer.CHANNEL_TYPE)
 			
 			#水面
 			if origin_height == 0 and relative_height < 0:
-				out_buffer.set_voxel(water_top, x, 0, z, VoxelBuffer.CHANNEL_TYPE)
+				out_buffer.set_voxel(default_blocks.water_top, x, 0, z, VoxelBuffer.CHANNEL_TYPE)
 	
 	var chunk_AABB := AABB(Vector3i(), out_buffer.get_size())
 	var voxel_tool := out_buffer.get_voxel_tool()
@@ -57,7 +51,7 @@ func _generate_block(out_buffer: VoxelBuffer, origin_in_voxels: Vector3i, lod: i
 					var pos = tree.pos + Vector3i(x, y, z) * 16
 					var tree_AABB = AABB(pos, tree.voxels.get_size())
 					if tree_AABB.intersects(chunk_AABB):
-						voxel_tool.paste_masked(pos, tree.voxels, 1 << VoxelBuffer.CHANNEL_TYPE, VoxelBuffer.CHANNEL_TYPE, air)
+						voxel_tool.paste_masked(pos, tree.voxels, 1 << VoxelBuffer.CHANNEL_TYPE, VoxelBuffer.CHANNEL_TYPE, default_blocks.air)
 						
 	out_buffer.compress_uniform_channels()
 						

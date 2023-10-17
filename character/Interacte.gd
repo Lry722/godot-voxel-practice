@@ -2,7 +2,7 @@ extends Node
 
 @export var eyes : Camera3D
 @export var body : MeshInstance3D
-@export var operation_range := 5.0
+@export var operation_range := 10.0
 @export var cursor_margin := 0.005
 
 @onready var terrain : VoxelTerrain = get_node('/root/Game/VoxelTerrain')
@@ -26,7 +26,7 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed('destroy') and pointed_voxel:
 		Blocks.destroy(pointed_voxel, terrain_tool)
 	elif Input.is_action_just_pressed("place"):
-		var placeable_voxel_and_normal = get_placeable_voxel()
+		var placeable_voxel_and_normal = get_placeable_voxel_normal()
 		if placeable_voxel_and_normal:
 			Blocks.place(5, placeable_voxel_and_normal[0], placeable_voxel_and_normal[1], eyes.basis.z, terrain_tool)
 	
@@ -41,7 +41,7 @@ func get_pointed_voxel():
 	else:
 		return null
 		
-func get_placeable_voxel():
+func get_placeable_voxel_normal():
 	var mouse_pos = get_viewport().get_mouse_position()
 	var origin = eyes.project_ray_origin(mouse_pos) 
 	var forward = eyes.basis.z.normalized() * -1
