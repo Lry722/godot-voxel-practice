@@ -5,11 +5,14 @@ var heightmap := preload("res://generator/heightmap.tres")
 var tree_generator := preload("res://generator/tree_generator.gd").new()
 
 var default_blocks = Blocks.get_default_blocks()
+var liquids = Liquids.get_liquids()
 
 func _init() :
 	noise.frequency = 1.0 / 256.0
 	noise.fractal_octaves = 16.0
 	heightmap.bake()
+	print(default_blocks)
+	print(liquids)
 
 func _generate_block(out_buffer: VoxelBuffer, origin_in_voxels: Vector3i, lod: int):
 	var origin_height := origin_in_voxels.y
@@ -34,13 +37,13 @@ func _generate_block(out_buffer: VoxelBuffer, origin_in_voxels: Vector3i, lod: i
 			#水	
 			if origin_height < 0:
 				if relative_height < 0 :
-					out_buffer.fill_area(default_blocks.water_full, Vector3i(x, 0, z), Vector3i(x + 1, 16, z + 1), VoxelBuffer.CHANNEL_TYPE)
+					out_buffer.fill_area(liquids.water_full, Vector3i(x, 0, z), Vector3i(x + 1, 16, z + 1), VoxelBuffer.CHANNEL_TYPE)
 				elif relative_height < 16 :
-					out_buffer.fill_area(default_blocks.water_full, Vector3i(x, relative_height + 1, z), Vector3i(x + 1, 16, z + 1), VoxelBuffer.CHANNEL_TYPE)
+					out_buffer.fill_area(liquids.water_full, Vector3i(x, relative_height + 1, z), Vector3i(x + 1, 16, z + 1), VoxelBuffer.CHANNEL_TYPE)
 			
 			#水面
 			if origin_height == 0 and relative_height < 0:
-				out_buffer.set_voxel(default_blocks.water_top, x, 0, z, VoxelBuffer.CHANNEL_TYPE)
+				out_buffer.set_voxel(liquids.water_top, x, 0, z, VoxelBuffer.CHANNEL_TYPE)
 	
 	var chunk_AABB := AABB(Vector3i(), out_buffer.get_size())
 	var voxel_tool := out_buffer.get_voxel_tool()

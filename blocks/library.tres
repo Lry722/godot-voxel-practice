@@ -3,9 +3,9 @@
 [ext_resource type="Material" uid="uid://c4w481gwf71pt" path="res://blocks/block_material.tres" id="1_peb6p"]
 [ext_resource type="Texture2D" uid="uid://b5hsh3rlb3gfm" path="res://blocks/terrain.png" id="2_504u6"]
 [ext_resource type="ArrayMesh" uid="uid://cu65rchmr327u" path="res://blocks/tall_grass/tall_grass.obj" id="3_dma6e"]
-[ext_resource type="Material" uid="uid://bnn3o2hdt760v" path="res://liquid/liquid_material.tres" id="4_401pa"]
 [ext_resource type="ArrayMesh" uid="uid://c4mn047wl05hi" path="res://blocks/water/water_top.obj" id="4_s0rx4"]
 [ext_resource type="ArrayMesh" uid="uid://cef2cuxluo6l0" path="res://blocks/water/water_full.obj" id="5_qmnfy"]
+[ext_resource type="Material" uid="uid://dohswj08ikeud" path="res://liquids/materials/water.tres" id="5_tio07"]
 [ext_resource type="ArrayMesh" uid="uid://b7cvpsjkwo013" path="res://blocks/stairs/stairs.obj" id="6_e83o1"]
 [ext_resource type="ArrayMesh" uid="uid://rnyxfcd688vs" path="res://blocks/stairs/stairs_leftDot.obj" id="7_uim7p"]
 [ext_resource type="ArrayMesh" uid="uid://lcgxqendirhe" path="res://blocks/stairs/stairs_rightDot.obj" id="8_tdmrs"]
@@ -87,7 +87,7 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_dv5v1"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u374j"]
 render_priority = 0
 shader = SubResource("Shader_vfx0s")
 shader_parameter/albedo = Color(1, 1, 1, 1)
@@ -109,7 +109,7 @@ transparent = true
 transparency_index = 1
 collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 0.9, 1)])
 collision_mask = 8
-material_override_0 = SubResource("ShaderMaterial_dv5v1")
+material_override_0 = SubResource("ShaderMaterial_u374j")
 collision_enabled_0 = false
 mesh = ExtResource("4_s0rx4")
 
@@ -119,7 +119,7 @@ transparent = true
 transparency_index = 1
 collision_aabbs = Array[AABB]([AABB(0, 0, 0, 1, 1, 1)])
 collision_mask = 8
-material_override_0 = ExtResource("4_401pa")
+material_override_0 = ExtResource("5_tio07")
 collision_enabled_0 = false
 mesh = ExtResource("5_qmnfy")
 
@@ -167,4 +167,5 @@ collision_enabled_0 = true
 mesh = ExtResource("8_tdmrs")
 
 [resource]
+bake_tangents = false
 models = Array[VoxelBlockyModel]([SubResource("VoxelBlockyModelEmpty_d4j4b"), SubResource("VoxelBlockyModelCube_sfres"), SubResource("VoxelBlockyModelCube_8pr5c"), SubResource("VoxelBlockyModelMesh_xbs40"), SubResource("VoxelBlockyModelMesh_lwgkl"), SubResource("VoxelBlockyModelMesh_mhx8w"), SubResource("VoxelBlockyModelCube_y7obb"), SubResource("VoxelBlockyModelCube_eqy18"), SubResource("VoxelBlockyModelMesh_4tp72"), SubResource("VoxelBlockyModelMesh_cpvis"), SubResource("VoxelBlockyModelMesh_gbqlf")])

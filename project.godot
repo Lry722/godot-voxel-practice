@@ -17,7 +17,7 @@ config/features=PackedStringArray("4.1", "Forward Plus")
 [autoload]
 
 Blocks="*res://blocks/blocks.gd"
-Liquids="*res://liquid/liquids.gd"
+Liquids="*res://liquids/liquids.gd"
 
 [input]
 

@@ -61,11 +61,11 @@ static func create_wireframe_mesh(model: VoxelBlockyModel) -> Mesh:
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_LINES, arrays)
 	return mesh
 	
-static func get_attributes_variants(block_info : Dictionary) -> Array:
-	var attributes = block_info.attributes
+static func get_attributes_variants(block : Block) -> Array:
+	var attributes = block.attributes
 
-	var result = [block_info.name]
-	if block_info.attributes.is_empty():
+	var result = [block.name]
+	if block.attributes.is_empty():
 		return result
 	
 	var stack := []
@@ -77,7 +77,7 @@ static func get_attributes_variants(block_info : Dictionary) -> Array:
 		if top == attributes.size():
 			var comb = ''
 			for i in stack.size():
-				comb += block_info.name + '_' + String(attributes[i][stack[i]])
+				comb += block.name + '_' + str(attributes[i][stack[i]])
 			result.append(comb)
 			top -= 1
 		elif attributes[top].size() > stack[top]:

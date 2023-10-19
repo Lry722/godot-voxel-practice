@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://di0ajml82pym3"]
 
 [ext_resource type="Script" path="res://character/character.gd" id="1_1q5pk"]
-[ext_resource type="Script" path="res://character/Camera3D.gd" id="2_wushv"]
+[ext_resource type="Script" path="res://character/fps_camera.gd" id="2_cgcrq"]
 [ext_resource type="Script" path="res://character/interacte.gd" id="3_loj53"]
 [ext_resource type="Texture2D" uid="uid://cuaut0tlr7m2a" path="res://character/crosshair.png" id="4_rnfjw"]
 
@@ -13,7 +13,7 @@ script = ExtResource("1_1q5pk")
 
 [node name="Eyes" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
-script = ExtResource("2_wushv")
+script = ExtResource("2_cgcrq")
 
 [node name="Body" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_igr6x")

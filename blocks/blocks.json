@@ -40,15 +40,11 @@
 		},
 		{
 			"has_script": false,
-			"name": "water_full",
+			"name": "water",
 			"orientation_type": 0,
-			"attributes": []
-		},
-		{
-			"has_script": false,
-			"name": "water_top",
-			"orientation_type": 0,
-			"attributes": []
+			"attributes": [
+				["full", "top"]
+			]
 		}
 	]
 }
