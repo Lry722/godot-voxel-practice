@@ -26,13 +26,14 @@ mesher = SubResource("VoxelMesherBlocky_efljv")
 run_stream_in_editor = false
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 0, 0)
+transform = Transform3D(0.781716, -0.599729, 0.17101, 0.17101, 0.469846, 0.866025, -0.599729, -0.647742, 0.469846, 0, 0, 0)
 light_color = Color(1, 0.917647, 0.811765, 1)
 shadow_enabled = true
 shadow_opacity = 0.9
 
 [node name="character" parent="." node_paths=PackedStringArray("_terrain") instance=ExtResource("3_45uwf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
+_speed = 8.0
 _max_speed = 50.0
 _terrain = NodePath("../VoxelTerrain")
 

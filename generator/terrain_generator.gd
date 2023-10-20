@@ -5,7 +5,7 @@ var heightmap := preload("res://generator/heightmap.tres")
 var tree_generator := preload("res://generator/tree_generator.gd").new()
 
 var default_blocks = Blocks.get_default_blocks()
-var liquids = Liquids.get_liquids()
+var liquids = Liquids.get_liquid_sources()
 
 func _init() :
 	noise.frequency = 1.0 / 256.0
@@ -31,8 +31,8 @@ func _generate_block(out_buffer: VoxelBuffer, origin_in_voxels: Vector3i, lod: i
 				out_buffer.fill_area(default_blocks.dirt, Vector3i(x, 0, z), Vector3i(x + 1, relative_height + 1, z + 1), VoxelBuffer.CHANNEL_TYPE)
 				if origin_height >= 0:
 					out_buffer.set_voxel(default_blocks.grass, x, relative_height, z, VoxelBuffer.CHANNEL_TYPE)
-					if rand.randf() < 0.1 and relative_height + 1 < 16 :
-						out_buffer.set_voxel(default_blocks.tall_grass, x, relative_height + 1, z, VoxelBuffer.CHANNEL_TYPE)
+#					if rand.randf() < 0.1 and relative_height + 1 < 16 :
+#						out_buffer.set_voxel(default_blocks.tall_grass, x, relative_height + 1, z, VoxelBuffer.CHANNEL_TYPE)
 
 			#水	
 			if origin_height < 0:
