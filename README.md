@@ -15,4 +15,4 @@ Implemented features:<br/>
 8: X/DX/NX/DNX/Z/DZ/NZ/DNZ<br/>
 N represents negative direction and D represents the block is downward
 - Liquid system, currently only containing water
-
+- Hotbar with support for hot keys and mouse wheel
