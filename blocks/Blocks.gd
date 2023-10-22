@@ -7,7 +7,7 @@ var variant_to_block = []
 
 var blocks_size : int :
 	get:
-		return blocks.size()
+		return variant_to_block.size()
 		
 var library_size : int :
 	get:
@@ -27,6 +27,14 @@ func _init():
 		block.attributes = block_info.attributes
 		add_block(block)
 		
+		var item := Item.new()
+		item.display = load('res://blocks/' + block.name + '/' + block.name + '_sprite.png')
+		item.name = block.name
+		item.type = Item.Type.BLOCK
+		item.id = block.index
+		item.count = -1
+		Items.add(item)
+		
 	for i in variant_to_block.size():
 		if variant_to_block[i] == null:
 			variant_to_block[i] = 0
@@ -34,28 +42,33 @@ func _init():
 	process_mode = Node.PROCESS_MODE_DISABLED
 			
 func place(block_index : int, pos : Vector3i, normal : Vector3i, sight_dir : Vector3, tool : VoxelToolTerrain):
-	blocks[block_index].place(pos, normal, sight_dir, tool)
+	var variant = blocks[block_index].place(pos, normal, sight_dir, tool)
 	update_around(pos, tool)
-	update(pos, Vector3i(), tool)
+	Liquids.modify_variant_at(pos, variant)
 	Liquids.update_around(pos)
 
 func destroy(pos : Vector3i, tool : VoxelToolTerrain):
 	var variant := tool.get_voxel(pos)
 	blocks[variant_to_block[variant]].destroy(pos, tool)
 	update_around(pos, tool)
+	Liquids.modify_variant_at(pos, 0)
 	Liquids.update(pos)
 
 func update(pos : Vector3i, from : Vector3i, tool : VoxelToolTerrain):
-	var variant_index := tool.get_voxel(pos)
-	var block_to_update : Block = blocks[variant_to_block[variant_index]]
+	var variant := tool.get_voxel(pos)
+	var block_to_update : Block = blocks[variant_to_block[variant]]
 	if block_to_update:
-		block_to_update.update(pos, from, tool)
+		var changed = block_to_update.update(pos, from, tool)
+		if changed:
+			variant = tool.get_voxel(pos)
+			Liquids.modify_variant_at(pos, variant)
+			Liquids.update(pos)
 		
 func update_around(pos : Vector3i, tool : VoxelToolTerrain):
 	for offset in [Vector3i(-1, 0, 0), Vector3i(0, -1, 0), Vector3i(0, 0, -1),
 				   Vector3i(1, 0, 0), Vector3i(0, 1, 0), Vector3i(0, 0, 1)]:
 		var pos_to_update = pos + offset
-		if not Liquids.is_liquid(pos_to_update):
+		if not Liquids.is_liquid_at(pos_to_update):
 			update(pos_to_update, -offset,tool)
 		
 func add_block(block : Block):
@@ -72,13 +85,13 @@ func is_block(variant_index : int) -> bool:
 func add_variant(variant : VoxelBlockyModel):
 	library.add_model(variant)
 
-func get_variant_index_by_name(name : String) -> int:
+func get_variant_by_name(name : String) -> int:
 	return library.get_model_index_from_resource_name(name)
 
-func get_variant_by_index(index : int) -> VoxelBlockyModel:
+func get_variant_model_by_index(index : int) -> VoxelBlockyModel:
 	return library.get_model(index)
 
-func get_variant_by_name(name : String) -> VoxelBlockyModel:
+func get_variant_model_by_name(name : String) -> VoxelBlockyModel:
 	return library.get_model(library.get_model_index_from_resource_name(name))
 
 func get_block_index_by_variant_index(index : int) -> int:

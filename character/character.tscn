@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://di0ajml82pym3"]
+[gd_scene load_steps=7 format=3 uid="uid://di0ajml82pym3"]
 
 [ext_resource type="Script" path="res://character/character.gd" id="1_1q5pk"]
 [ext_resource type="Script" path="res://character/fps_camera.gd" id="2_cgcrq"]
 [ext_resource type="Script" path="res://character/interacte.gd" id="3_loj53"]
-[ext_resource type="Texture2D" uid="uid://cuaut0tlr7m2a" path="res://character/crosshair.png" id="4_rnfjw"]
+[ext_resource type="Texture2D" uid="uid://cuaut0tlr7m2a" path="res://character/gui/crosshair.png" id="4_v5kx6"]
+[ext_resource type="PackedScene" uid="uid://861vdl4dqi8s" path="res://character/gui/hot_bar.tscn" id="5_ugk64"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_igr6x"]
 size = Vector3(0.8, 1.8, 0.8)
@@ -24,6 +25,8 @@ mesh = SubResource("BoxMesh_igr6x")
 script = ExtResource("3_loj53")
 eyes = NodePath("../Eyes")
 body = NodePath("../Body")
+operation_range = null
+cursor_margin = null
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 3
@@ -48,4 +51,9 @@ offset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("4_rnfjw")
+texture = ExtResource("4_v5kx6")
+
+[node name="HotBar" parent="UI" instance=ExtResource("5_ugk64")]
+layout_mode = 1
+
+[connection signal="selected_item_changed" from="UI/HotBar" to="Interacte" method="set_item_in_hand"]

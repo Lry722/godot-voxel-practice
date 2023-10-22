@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cuaut0tlr7m2a"
-path="res://.godot/imported/crosshair.png-b646aefc160a5a8da8540b98ca5ef572.ctex"
+uid="uid://c26idcdequ4a"
+path="res://.godot/imported/hotbar_slot_bg.png-9767c540d476cfa254667781e441a480.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://character/crosshair.png"
-dest_files=["res://.godot/imported/crosshair.png-b646aefc160a5a8da8540b98ca5ef572.ctex"]
+source_file="res://character/gui/hotbar_slot_bg.png"
+dest_files=["res://.godot/imported/hotbar_slot_bg.png-9767c540d476cfa254667781e441a480.ctex"]
 
 [params]
 

@@ -1,7 +1,7 @@
 extends Node
 
-@export var interval := .2
-@export var max_process := 10
+@export var interval := 0.5
+@export var max_process := 50
 
 @onready var terrain : VoxelTerrain = get_node('/root/Game/VoxelTerrain')
 @onready var terrain_tool : VoxelTool = terrain.get_voxel_tool()
@@ -16,6 +16,8 @@ var name_to_variant := Dictionary()
 var variant_to_liquid := []
 
 var update_queue := []
+var height_cache := Dictionary()
+var variant_cache := Dictionary()
 var head := 0
 var tail := 0
 var cur_tail := 0
@@ -46,6 +48,14 @@ func _init():
 			[4, 3, 2, 1, 0]
 		]
 		
+		var item := Item.new()
+		item.display = load('res://liquids/' + liquid.name + '/' + liquid.name + '_sprite.png')
+		item.name = liquid.name
+		item.type = Item.Type.LIQUID
+		item.id = liquid.index
+		item.count = -1
+		Items.add(item)
+		
 		variant_to_liquid.resize(Blocks.library_size + pow(5, 4))
 		for lt in 5:
 			for rt in 5:
@@ -62,8 +72,8 @@ func _init():
 						Blocks.add_variant(variant)
 						variant_to_liquid[variant_index] = liquid.index
 						name_to_variant[variant.resource_name] = variant_index
-						liquid_sources[liquid.name + '_full'] = Blocks.get_variant_index_by_name(liquid.name + '_4444')
-						liquid_sources[liquid.name + '_top'] = Blocks.get_variant_index_by_name(liquid.name + '_3333')
+						liquid_sources[liquid.name + '_full'] = Blocks.get_variant_by_name(liquid.name + '_4444')
+						liquid_sources[liquid.name + '_top'] = Blocks.get_variant_by_name(liquid.name + '_3333')
 		
 		liquids.append(liquid)
 		update_queue.resize(max_process * 10)
@@ -76,23 +86,25 @@ func _process(delta):
 			cur_tail = tail
 			for pos in pos_to_update:
 				terrain_tool.set_voxel(pos, pos_to_update[pos])
+				if pos_to_update[pos] == 0:
+					terrain_tool.set_voxel_metadata(pos, null)
 			pos_to_update.clear()
-	
+			height_cache.clear()
+			variant_cache.clear()
+
 	for i in max_process:
 		if head == cur_tail:
 			break
 		var pos : Vector3i = update_queue[head]
-		var variant = terrain_tool.get_voxel(pos)
-		print('head: ', head, ' cur_tail: ', cur_tail, ' tail: ', tail)
-#		print('head pos: ', pos,' head variant: ', variant)
+		var variant = get_variant_at(pos)
 		head = (head + 1) % update_queue.size()
 		var height := get_height(pos)
-		if not pos in pos_to_update:
-			var y := terrain_tool.get_voxel(pos + Vector3i(0, 1, 0))
-			var ny := terrain_tool.get_voxel(pos + Vector3i(0, -1, 0))
-			if is_liquid(pos + Vector3i(0, 1, 0), y):
+		if (not pos in pos_to_update) and (not Blocks.is_block(variant)):
+			var y := get_variant_at(pos + Vector3i(0, 1, 0))
+			var ny := get_variant_at(pos + Vector3i(0, -1, 0))
+			if is_liquid(y):
 				if get_height(pos, variant) != 4:
-					pos_to_update[pos] = name_to_variant[liquids[variant_to_liquid[y]].name + '_4444']
+					modify_variant_at(pos, name_to_variant[liquids[variant_to_liquid[y]].name + '_4444'])
 					terrain_tool.set_voxel_metadata(pos, {'height': 4, 'flowable': Blocks.is_block(ny)})
 					update_around(pos)
 			else:
@@ -105,56 +117,58 @@ func _process(delta):
 				var j := 0
 				for offset in [Vector3i(-1, 0, 0), Vector3i(0, 0, -1), Vector3i(1, 0, 0), Vector3i(0, 0, 1)]:
 					var neighbor_pos = pos + offset
-					var neighbor := terrain_tool.get_voxel(neighbor_pos)
+					var neighbor := get_variant_at(neighbor_pos)
 					var neighbor_height := get_height(neighbor_pos, neighbor)
 						
 					if neighbor_height > max_neighbor_height:
 						max_neighbor_height = neighbor_height
 						tallest_neighbor = neighbor
 					heights[j] = neighbor_height
-					
-					if is_source(neighbor_pos, neighbor):
+					if is_source(neighbor_pos):
 						source_count += 1
-						
-					exist = true if is_flowable(neighbor_pos) else exist
-					
+					exist = is_flowable(neighbor_pos) or exist
 					j += 1
 
+				var new_height := height - 1 if max_neighbor_height <= height else max_neighbor_height - 1
 				if source_count >= 2:
-					pos_to_update[pos] = name_to_variant[liquids[variant_to_liquid[tallest_neighbor]].name + '_3333']
+					modify_variant_at(pos, name_to_variant[liquids[variant_to_liquid[tallest_neighbor]].name + '_3333'])
 					terrain_tool.set_voxel_metadata(pos, null)
 					update_around(pos)
-				elif exist:
-					var new_height := height - 1 if max_neighbor_height <= height else max_neighbor_height - 1
-					if new_height > 0:
-						terrain_tool.set_voxel_metadata(pos, {'height': new_height, 'flowable': Blocks.is_block(ny)})
-						for offset in [Vector3i(-1, 0, -1), Vector3i(1, 0, -1), Vector3i(1, 0, 1), Vector3i(-1, 0, 1)]:
-							heights[j] = max(get_height(pos + offset), heights[j - 4], heights[(j - 3) % 4])
-							if heights[j] < new_height:
+				elif exist and new_height > 0:
+					terrain_tool.set_voxel_metadata(pos, {'height': new_height, 'flowable': Blocks.is_block(ny)})
+					for offset in [Vector3i(-1, 0, -1), Vector3i(1, 0, -1), Vector3i(1, 0, 1), Vector3i(-1, 0, 1)]:
+						heights[j] = max(get_height(pos + offset), heights[j - 4], heights[(j - 3) % 4])
+						if heights[j] < new_height:
+							if heights[j] != 0:
 								heights[j] = new_height - 1
-							else:
-								heights[j] = heights[j] - 1
-							j += 1
-						var new_variant = name_to_variant[liquids[variant_to_liquid[tallest_neighbor]].name + '_' + 
-														  str(heights[4]) + str(heights[5]) + str(heights[6]) + str(heights[7])]
-						pos_to_update[pos] = new_variant
-						if height != new_height:
-							update_around(pos)
-					else:
-						pos_to_update[pos] = 0
-						terrain_tool.set_voxel_metadata(pos, null)
+						else:
+							heights[j] = heights[j] - 1
+						j += 1
+					var new_variant = name_to_variant[liquids[variant_to_liquid[tallest_neighbor]].name + '_' + 
+													  str(heights[4]) + str(heights[5]) + str(heights[6]) + str(heights[7])]
+					modify_variant_at(pos, new_variant)
+				else:
+					new_height = 0
+					modify_variant_at(pos, 0)
+					
+				if height != new_height:
+					update(pos)
+					update_around(pos)
 
 func place(liquid_index : int, pos : Vector3i):
-	if is_liquid(pos + Vector3i(0, 1, 0)):
-		terrain_tool.set_voxel(pos, Blocks.get_variant_index_by_name(liquids[liquid_index].name + '_4444')) 
+	var variant : int
+	if is_liquid_at(pos + Vector3i(0, 1, 0)):
+		variant = Blocks.get_variant_by_name(liquids[liquid_index].name + '_4444')
 	else:
-		terrain_tool.set_voxel(pos, Blocks.get_variant_index_by_name(liquids[liquid_index].name + '_3333')) 
+		variant = Blocks.get_variant_by_name(liquids[liquid_index].name + '_3333')
+	pos_to_update[pos] = variant
 	terrain_tool.set_voxel_metadata(pos, null)
+	terrain_tool.set_voxel(pos, variant)
 	update_around(pos)
 
 func update(pos : Vector3i):
 	var variant = terrain_tool.get_voxel(pos)
-	if (not pos in pos_to_update) and (variant == 0 or (is_liquid(pos, variant) and not is_source(pos, variant))) and (tail + 1) % update_queue.size() != head:
+	if (variant == 0 or (is_liquid(variant) and not is_source(pos))) and (tail + 1) % update_queue.size() != head:
 		update_queue[tail] = pos
 		tail = (tail + 1) % update_queue.size()
 		
@@ -169,21 +183,21 @@ func get_liquid_sources() -> Dictionary:
 func get_liquid(variant_index : int) -> Liquid:
 	return liquids[variant_to_liquid[variant_index]];
 
-func is_liquid(pos : Vector3i, variant := -1) -> bool:
-	variant = variant if variant != -1 else terrain_tool.get_voxel(pos)
-	return variant_to_liquid[variant] != null
+func is_liquid_at(pos : Vector3i) -> bool:
+	return is_liquid(get_variant_at(pos))
+
+func is_liquid(variant : int) -> bool:
+	return variant >= Blocks.blocks_size and variant < variant_to_liquid.size()
 	
-func is_source(pos : Vector3i, variant := -1) -> bool:
+func is_source(pos : Vector3i) -> bool:
 	var metadata = terrain_tool.get_voxel_metadata(pos)
-	variant = variant if variant != -1 else terrain_tool.get_voxel(pos)
-	if not is_liquid(pos, variant):
+	if not is_liquid_at(pos):
 		return false
 	return metadata == null
 	
-func is_flowable(pos : Vector3i, variant := -1) -> bool:
+func is_flowable(pos : Vector3i) -> bool:
 	var metadata = terrain_tool.get_voxel_metadata(pos)
-	variant = variant if variant != -1 else terrain_tool.get_voxel(pos)
-	if is_liquid(pos, variant):
+	if is_liquid_at(pos):
 		if metadata:
 			return metadata.flowable
 		else:
@@ -192,17 +206,33 @@ func is_flowable(pos : Vector3i, variant := -1) -> bool:
 		return false
 	
 func get_height(pos : Vector3i, variant := -1) -> int:
-	var metadata = terrain_tool.get_voxel_metadata(pos)
+	if pos in height_cache:
+		return height_cache[pos]
+		
 	variant = variant if variant != -1 else terrain_tool.get_voxel(pos)
-	if is_liquid(pos, variant):
+	var metadata = terrain_tool.get_voxel_metadata(pos)
+	var result := 0
+	if is_liquid(variant):
 		if metadata:
-			return metadata.height
+			result = metadata.height
 		else:
-			return 4
-	elif variant == 0:
-		return 0
-	else:
-		return -1
+			result = 4
+	elif variant != 0:
+		result = -1
+	height_cache[pos] = result
+	
+	return result
+
+func get_variant_at(pos : Vector3i) -> int:
+	if pos in variant_cache:
+		return variant_cache[pos]
+	var result = terrain_tool.get_voxel(pos)
+	variant_cache[pos] = result
+	return result
+	
+func modify_variant_at(pos : Vector3i, new_variant : int):
+	pos_to_update[pos] = new_variant
+	variant_cache[pos] = new_variant
 
 func create_liquid_meshes():
 	var normals := [

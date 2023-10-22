@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://861vdl4dqi8s"]
+
+[ext_resource type="Script" path="res://character/gui/hot_bar.gd" id="1_qvsh4"]
+
+[node name="HotBar" type="CenterContainer"]
+custom_minimum_size = Vector2(0, 60)
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_qvsh4")
+
+[node name="Slots" type="HBoxContainer" parent="."]
+layout_mode = 2

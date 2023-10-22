@@ -1,5 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://cgrq37cgfhbp5"]
+[gd_scene load_steps=10 format=3 uid="uid://cgrq37cgfhbp5"]
 
+[ext_resource type="Script" path="res://game.gd" id="1_oijq2"]
 [ext_resource type="VoxelGeneratorScript" uid="uid://jdbcaobc6lwu" path="res://generator/terrain_generator.tres" id="1_pq5bh"]
 [ext_resource type="VoxelBlockyLibrary" uid="uid://dsmaa8blhcpue" path="res://blocks/library.tres" id="2_r7uav"]
 [ext_resource type="PackedScene" uid="uid://di0ajml82pym3" path="res://character/character.tscn" id="3_45uwf"]
@@ -19,6 +20,7 @@ background_mode = 2
 sky = SubResource("Sky_tcu27")
 
 [node name="Game" type="Node"]
+script = ExtResource("1_oijq2")
 
 [node name="VoxelTerrain" type="VoxelTerrain" parent="."]
 generator = ExtResource("1_pq5bh")
