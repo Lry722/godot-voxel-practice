@@ -46,7 +46,7 @@ func _physics_process(delta):
 		if Input.is_key_pressed(KEY_SPACE) :
 			_velocity.y = _jump_force
 			_grounded = false
-		
+
 	var expect_movement = _velocity * delta
 	var actual_movement = _box_mover.get_motion(position, expect_movement, _AABB, _terrain)
 	translate(actual_movement)

@@ -25,6 +25,7 @@ func _init():
 		block.name = block_info.name
 		block.orientation_type = block_info.orientation_type
 		block.attributes = block_info.attributes
+		block.flags = block_info.flags if 'flags' in block_info else []
 		add_block(block)
 		
 		var item := Item.new()
@@ -51,11 +52,12 @@ func destroy(pos : Vector3i, tool : VoxelToolTerrain):
 	var variant := tool.get_voxel(pos)
 	blocks[variant_to_block[variant]].destroy(pos, tool)
 	update_around(pos, tool)
-	Liquids.modify_variant_at(pos, 0)
 	Liquids.update(pos)
 
 func update(pos : Vector3i, from : Vector3i, tool : VoxelToolTerrain):
 	var variant := tool.get_voxel(pos)
+	if not is_block(variant):
+		return
 	var block_to_update : Block = blocks[variant_to_block[variant]]
 	if block_to_update:
 		var changed = block_to_update.update(pos, from, tool)
@@ -68,8 +70,7 @@ func update_around(pos : Vector3i, tool : VoxelToolTerrain):
 	for offset in [Vector3i(-1, 0, 0), Vector3i(0, -1, 0), Vector3i(0, 0, -1),
 				   Vector3i(1, 0, 0), Vector3i(0, 1, 0), Vector3i(0, 0, 1)]:
 		var pos_to_update = pos + offset
-		if not Liquids.is_liquid_at(pos_to_update):
-			update(pos_to_update, -offset,tool)
+		update(pos_to_update, -offset,tool)
 		
 func add_block(block : Block):
 	block.index = blocks.size() - 1
@@ -81,7 +82,10 @@ func add_block(block : Block):
 		
 func is_block(variant_index : int) -> bool:
 	return variant_index > 0 and variant_index < variant_to_block.size()
-		
+
+func variant_has_flag(variant : int, flag : String) -> bool:
+	return flag in blocks[get_block_index_by_variant_index(variant)].flags if is_block(variant) else false
+
 func add_variant(variant : VoxelBlockyModel):
 	library.add_model(variant)
 

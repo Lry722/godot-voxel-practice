@@ -4,6 +4,7 @@ var index : int
 var name : String
 var orientation_type : int
 var attributes : Array
+var flags : Array
 
 func place(pos : Vector3i, normal : Vector3i, sight_dir : Vector3, tool : VoxelToolTerrain) -> int:
 	var variant_name := name

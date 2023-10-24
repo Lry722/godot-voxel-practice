@@ -16,7 +16,8 @@
 			"has_script": true,
 			"name": "tall_grass",
 			"orientation_type": 0,
-			"attributes": []
+			"attributes": [],
+			"flags": ["fragile"]
 		},
 		{
 			"has_script": false,

@@ -18,7 +18,8 @@ var variant_to_liquid := []
 var update_queue := []
 var height_cache := Dictionary()
 var variant_cache := Dictionary()
-var source_cache := Dictionary()
+var source_cache := []
+var destroyed_blocks := []
 var head := 0
 var tail := 0
 var cur_tail := 0
@@ -89,25 +90,27 @@ func _process(delta):
 	for i in max_process:
 		if head == cur_tail:
 			break
-#		print('head: ', ' cur tail: ',cur_tail, ' tail: ', tail)
+#		print('head: %d cur_tail: %d tail: %d' % [head, cur_tail, tail])
 		var pos : Vector3i = update_queue[head]
 		var variant = get_variant_at(pos)
 		head = (head + 1) % update_queue.size()
 		var height := get_height(pos)
-		if (not pos in pos_to_update) and (not Blocks.is_block(variant)):
+		if (not pos in pos_to_update) and ((not Blocks.is_block(variant)) or Blocks.variant_has_flag(variant, 'fragile')):
 			var y := get_variant_at(pos + Vector3i(0, 1, 0))
 			var ny := get_variant_at(pos + Vector3i(0, -1, 0))
+			var new_height := -1
+			var new_variant := -1
 			if is_liquid(y):
 				if get_height(pos, variant) != 4:
-					modify_variant_at(pos, name_to_variant[liquids[variant_to_liquid[y]].name + '_4444'])
-					terrain_tool.set_voxel_metadata(pos, {'height': 4, 'flowable': Blocks.is_block(ny)})
-					update_around(pos)
+					new_height = 4
+					new_variant = name_to_variant[liquids[variant_to_liquid[y]].name + '_4444']
+					terrain_tool.set_voxel_metadata(pos, {'height': new_height, 'flowable': Blocks.is_block(ny)})
 			else:
 				var heights = []
 				heights.resize(8)
-				var tallest_neighbor := 0
 				var source_count := 0
-				var exist := false
+				var can_flow_here := false
+				var tallest_neighbor := 0
 				var max_neighbor_height := 0
 				var j := 0
 				for offset in [Vector3i(-1, 0, 0), Vector3i(0, 0, -1), Vector3i(1, 0, 0), Vector3i(0, 0, 1)]:
@@ -121,17 +124,18 @@ func _process(delta):
 						heights[j] = neighbor_height
 						if is_source(neighbor_pos):
 							source_count += 1
-						exist = is_flowable(neighbor_pos) or exist
+						can_flow_here = is_flowable(neighbor_pos) or can_flow_here
 					else:
 						heights[j] = -1
 					j += 1
 
-				var new_height := height - 1 if max_neighbor_height <= height else max_neighbor_height - 1
+				new_height = height - 1 if max_neighbor_height <= height else max_neighbor_height - 1
 				if source_count >= 2:
-					modify_variant_at(pos, name_to_variant[liquids[variant_to_liquid[tallest_neighbor]].name + '_3333'])
+					new_height = 4
+					new_variant = name_to_variant[liquids[variant_to_liquid[tallest_neighbor]].name + '_3333']
+					source_cache.append(pos)
 					terrain_tool.set_voxel_metadata(pos, null)
-					update_around(pos)
-				elif exist and new_height > 0:
+				elif can_flow_here and new_height > 0:
 					terrain_tool.set_voxel_metadata(pos, {'height': new_height, 'flowable': Blocks.is_block(ny)})
 					for offset in [Vector3i(-1, 0, -1), Vector3i(1, 0, -1), Vector3i(1, 0, 1), Vector3i(-1, 0, 1)]:
 						heights[j] = max(get_height(pos + offset), heights[j - 4], heights[(j - 3) % 4])
@@ -140,13 +144,19 @@ func _process(delta):
 						else:
 							heights[j] = heights[j] - 1
 						j += 1
-					var new_variant = name_to_variant[liquids[variant_to_liquid[tallest_neighbor]].name + '_' + 
+					var from_variant = tallest_neighbor if is_liquid(tallest_neighbor) else variant
+					new_variant = name_to_variant[liquids[variant_to_liquid[from_variant]].name + '_' + 
 													  str(heights[4]) + str(heights[5]) + str(heights[6]) + str(heights[7])]
-					modify_variant_at(pos, new_variant)
-				else:
+					if Blocks.variant_has_flag(variant, 'fragile'):
+						destroyed_blocks.append(pos)
+				elif is_liquid(variant):
 					new_height = 0
-					modify_variant_at(pos, 0)
+					new_variant = 0
 					
+			if new_variant != -1 and new_height != -1 and variant != new_variant and (is_liquid(variant) or new_variant != 0):
+#				print('height: %d new_height: %d variant: %d new_variant: %d' % [height, new_height, variant, new_variant])
+#				print('variant: %d new_variant: %d' % [variant, new_variant])
+				modify_variant_at(pos, new_variant)
 				if height != new_height:
 					update_around(pos)
 					update(pos)
@@ -164,7 +174,7 @@ func place(liquid_index : int, pos : Vector3i):
 
 func update(pos : Vector3i):
 	var variant = terrain_tool.get_voxel(pos)
-	if (variant == 0 or (is_liquid(variant) and not is_source(pos))) and (tail + 1) % update_queue.size() != head:
+	if (variant == 0 or (is_liquid(variant) and not is_source(pos)) or Blocks.variant_has_flag(variant, 'fragile')) and (tail + 1) % update_queue.size() != head:
 		update_queue[tail] = pos
 		tail = (tail + 1) % update_queue.size()
 		
@@ -195,7 +205,7 @@ func is_source(pos : Vector3i) -> bool:
 	else:
 		result = (metadata == null)
 	if result:
-		source_cache[pos] = true
+		source_cache.append(pos)
 	return result
 	
 func is_flowable(pos : Vector3i) -> bool:
@@ -207,7 +217,7 @@ func is_flowable(pos : Vector3i) -> bool:
 			return true
 	else:
 		return false
-	
+
 func get_height(pos : Vector3i, variant := -1) -> int:
 	if pos in height_cache:
 		return height_cache[pos]
@@ -234,19 +244,24 @@ func get_variant_at(pos : Vector3i) -> int:
 	return result
 	
 func modify_variant_at(pos : Vector3i, new_variant : int, source := false):
-	if new_variant == 0 or is_liquid(new_variant):
+	if is_liquid(new_variant) or new_variant == 0:
 		pos_to_update[pos] = new_variant
 	else:
 		pos_to_update.erase(pos)
+
+	height_cache.erase(pos)
 	variant_cache[pos] = new_variant
-	if source:
-		source_cache[pos] = source
-	else:
+	
+	if source and pos not in source_cache:
+		source_cache.append(pos)
+	if (not source) and (pos in source_cache):
 		source_cache.erase(pos)
 	
 func apply_update():
 	cur_tail = tail
 	for pos in pos_to_update:
+		if pos in destroyed_blocks:
+			Blocks.destroy(pos, terrain_tool)
 		terrain_tool.set_voxel(pos, pos_to_update[pos])
 		if pos_to_update[pos] == 0:
 			terrain_tool.set_voxel_metadata(pos, null)
@@ -254,6 +269,7 @@ func apply_update():
 	height_cache.clear()
 	variant_cache.clear()
 	source_cache.clear()
+	destroyed_blocks.clear()
 
 func create_liquid_meshes():
 	var normals := [
