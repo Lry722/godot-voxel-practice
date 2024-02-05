@@ -1,4 +1,3 @@
-# A project for getting familiar with Godot Voxel module
 Based on Zylann's Voxel Game example. Some features that were not included in the original example will be added in the future. The coding process is here https://www.bilibili.com/video/BV1mN411J7yv/ <br/>
 <br/>
 Implemented features:<br/>
